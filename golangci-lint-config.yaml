@@ -1,0 +1,48 @@
+#(C) Copyright 2019 Hewlett Packard Enterprise Development LP
+
+run:
+  deadline: 240s
+  tests: true
+  skip-dirs:
+    - vendor
+    - tilt_modules
+
+linters-settings:
+  dupl:
+    threshold: 110
+  lll:
+    line-length: 128
+  wrapcheck:
+    ignoreSigs:
+      # defaults, needed because this is not additive
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+      - .WithMessage(
+      - .WithMessagef(
+      - .WithStack(
+      # custom
+      - google.golang.org/grpc/status.Error
+
+linters:
+  enable-all: true
+  disable:
+    - gci
+    - exhaustivestruct
+    - interfacer
+    
+issues:
+  exclude-rules:
+    # Exclude lll issues for long lines with go:generate
+    - linters:
+        - lll
+      source: "^//go:generate "
+
+    # ignore function length for tests as look up tables typically exceed.
+    - linters:
+        - funlen
+        - goerr113
+        - wrapcheck
+      path: _test\.go
